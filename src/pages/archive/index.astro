@@ -1,0 +1,48 @@
+---
+export const prerender = false;
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+
+const POSTS_PER_PAGE = 3;
+
+const sortedPosts = (await getCollection('blog')).sort(
+    (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => 
+        b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const initialPosts: CollectionEntry<'blog'>[] = sortedPosts.slice(0, POSTS_PER_PAGE);
+const hasMore: boolean = sortedPosts.length > POSTS_PER_PAGE;
+---
+
+<Layout title="Archivio Articoli" description="Caricamento progressivo con HTMX.">
+  <h1 class="text-4xl font-extrabold text-gray-900 mb-8">Archivio</h1>
+
+  <!-- 1. Contenitore SOLO per i post -->
+  <div id="posts-container" class="grid gap-10">
+    {initialPosts.length > 0 ? (
+      initialPosts.map(post => (
+        <ArticleCard post={post} />
+      ))
+    ) : (
+      <p>Nessun articolo disponibile.</p>
+    )}
+  
+
+    <!-- 2. Contenitore del pulsante, ORA FUORI dalla griglia dei post -->
+    <div id="load-more-row" class="mt-12 text-center">
+        <!-- Mostra il pulsante solo se ci sono altri post -->
+        {hasMore && (
+        <button
+            type="button"
+            hx-get="/archive/load-more"
+            hx-target="#load-more-row"  
+            hx-swap="outerHTML"
+            class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700"
+        >
+            Carica Altri Articoli
+        </button>
+        )}
+    </div>
+  </div>
+</Layout>

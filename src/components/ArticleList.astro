@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ArticleCard from './ArticleCard.astro';
+
+interface Props {
+	posts: CollectionEntry<'blog'>[];
+	limit?: number;
+}
+
+const { posts, limit } = Astro.props;
+
+const limitedPosts = limit ? posts.slice(0, limit) : posts;
+---
+
+<div class="grid gap-10">
+	{limitedPosts.map((post: CollectionEntry<'blog'>) => (
+		<ArticleCard post={post} />
+	))}
+</div>

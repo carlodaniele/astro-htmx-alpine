@@ -1,0 +1,60 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+
+// --- IMPOSTAZIONI ---
+const POSTS_PER_PAGE = 3;
+
+// Ordina correttamente i post per data
+const sortedPosts = (await getCollection('blog')).sort(
+    (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => 
+        b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const totalPosts = sortedPosts.length;
+---
+<Layout 
+  title="Il Mio Blog" 
+  description="Una raccolta dei miei pensieri e tutorial sullo sviluppo web."
+>
+  <h1 class="text-4xl font-extrabold text-gray-900 mb-8">Tutti gli Articoli</h1>
+
+  <div 
+    x-data={`{ visibleItems: ${POSTS_PER_PAGE} }`}
+    x-cloak 
+  >
+  
+    <div class="grid gap-10">
+      
+      {sortedPosts.length > 0 ? (
+        sortedPosts.map((post, index) => (
+          <div x-show={`${index} < visibleItems`}>
+            <ArticleCard post={post} />
+          </div>
+        ))
+      ) : (
+        <p>Nessun articolo disponibile.</p>
+      )}
+
+    </div>
+
+    <div class="mt-12 text-center">
+      <button
+        type="button"
+        x-show={`visibleItems < ${totalPosts}`}
+        @click={`visibleItems += ${POSTS_PER_PAGE}`}
+        class="bg-purple-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors duration-300"
+      >
+        Carica Altri Articoli
+      </button>
+    </div>
+  </div>
+</Layout>
+
+<!-- Regola CSS fondamentale per prevenire la pagina bianca -->
+<style is:global>
+  [x-cloak] {
+    display: none !important;
+  }
+</style>

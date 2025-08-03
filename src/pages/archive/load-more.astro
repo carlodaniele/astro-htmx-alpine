@@ -1,0 +1,46 @@
+---
+export const prerender = false;
+
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+
+const POSTS_PER_PAGE = 3;
+const sortedPosts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+const totalPosts = sortedPosts.length;
+
+const page = Number(new URL(Astro.request.url).searchParams.get('page') || 2);
+
+const start = (page - 1) * POSTS_PER_PAGE;
+const end = page * POSTS_PER_PAGE;
+const postsToShow = sortedPosts.slice(start, end);
+const nextPage = page + 1;
+const hasMore = end < totalPosts;
+---
+
+{postsToShow.length > 0 ? (
+    postsToShow.map(post => (
+        <ArticleCard post={post} />
+    ))
+) : (
+    <p class="text-gray-500 italic text-sm">Nessun articolo disponibile per questa pagina.</p>
+)}
+
+<div x-data="{ page: 2 }" id="load-more-row" class="mt-12 text-center">
+  {hasMore ? (
+    <button
+      type="button"
+      hx-get={`/archive/load-more?page=${nextPage}`}
+      hx-target="#load-more-row"
+      hx-swap="outerHTML"
+      @click="page += 1"
+      class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700"
+    >
+      Altri Articoli 
+    </button>
+  ) : (
+    <p class="text-gray-500 italic text-sm">Hai visualizzato tutti gli articoli!</p>
+  )}
+</div>

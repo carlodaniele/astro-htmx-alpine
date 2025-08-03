@@ -1,0 +1,25 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+// getStaticPaths() genera le pagine al momento della build
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  
+  return posts.map((post: CollectionEntry<'blog'>) => ({
+    params: { slug: post.slug }, // L'URL della pagina (es. /blog/primo-post)
+    props: { post },            // I dati del post passati al componente
+  }));
+}
+
+// I dati del post vengono ricevuti da getStaticPaths
+const { post } = Astro.props;
+
+// Il contenuto Markdown/MDX viene renderizzato qui
+const { Content } = await post.render();
+---
+<!-- Usiamo un layout specifico per i post -->
+<PostLayout frontmatter={post.data}>
+  <!-- Questo contenuto HTML viene inserito nello <slot /> del layout PostLayout -->
+  <Content />
+</PostLayout>

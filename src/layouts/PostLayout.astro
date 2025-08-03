@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Layout from './Layout.astro'; // Il tuo layout di base
+
+interface Props {
+  frontmatter: CollectionEntry<'blog'>['data'];
+}
+const { frontmatter } = Astro.props;
+
+// Formattiamo la data per una migliore visualizzazione
+const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('it-IT', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+<Layout title={frontmatter.title} description={frontmatter.description}>
+  <article class="max-w-4xl mx-auto">
+    <!-- Intestazione dell'articolo -->
+    <div class="mb-8 text-center">
+      <p class="text-gray-500">{formattedDate}</p>
+      <h1 class="text-4xl md:text-5xl font-extrabold mt-2">{frontmatter.title}</h1>
+      <p class="mt-4 text-lg text-gray-600">di {frontmatter.author}</p>
+    </div>
+
+    <!-- Immagine di copertina (heroImage), se presente -->
+    {frontmatter.heroImage && (
+      <img 
+        src={frontmatter.heroImage} 
+        alt={`Immagine di copertina per l'articolo: ${frontmatter.title}`}
+        class="w-full h-auto max-h-96 object-cover rounded-lg shadow-lg mb-8"
+      />
+    )}
+
+    <!-- Qui verrà inserito il contenuto del post (lo <slot />) -->
+    <slot />
+  </article>
+</Layout>
