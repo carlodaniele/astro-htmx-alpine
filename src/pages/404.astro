@@ -1,0 +1,68 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const latestPosts = posts
+    .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+    .slice(0, 3);
+---
+
+<Layout 
+    title="404 - Pagina non trovata" 
+    description="La pagina che stai cercando non esiste. Scopri gli ultimi articoli del blog."
+>
+    <div class="max-w-4xl mx-auto px-6 py-12 text-center relative z-10">
+        <h1 class="text-5xl font-extrabold text-white mb-4 drop-shadow-lg">404 - Oops!</h1>
+        <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4 mb-8">
+            <p class="text-lg text-gray-100 drop-shadow-md">
+                La pagina che stai cercando non esiste. Torna alla <a href="/" class="text-yellow-300 hover:text-yellow-400 hover:underline drop-shadow-sm">homepage</a> o scopri alcuni dei nostri ultimi articoli.
+            </p>
+        </div>
+
+        <div id="posts-container" class="grid gap-10 bg-white/10 backdrop-blur-sm rounded-lg p-6 shadow-2xl mt-20 md:mt-32">
+            {latestPosts.length > 0 ? (
+                latestPosts.map(post => <ArticleCard post={post} />)
+            ) : (
+                <p class="text-gray-300 italic text-sm">Nessun articolo disponibile al momento.</p>
+            )}
+        </div>
+    </div>
+
+    <style is:global>
+        body {
+            background-image: url('/404.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+
+        /* Menu di navigazione semitrasparente solo su questa pagina */
+        header {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        nav a:hover {
+            color: #c084fc;
+        }
+
+        /* Link nel messaggio con colore giallo per contrasto su verde/blu */
+        p a {
+            color: #fde68a;  /* Giallo Tailwind yellow-300 */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);  /* Ombra per leggibilità */
+        }
+
+        p a:hover {
+            color: #fbbf24;  /* Giallo più scuro per hover (yellow-400) */
+        }
+    </style>
+</Layout>

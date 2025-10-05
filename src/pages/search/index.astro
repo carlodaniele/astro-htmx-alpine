@@ -1,0 +1,53 @@
+---
+export const prerender = false;
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+
+const query = Astro.url.searchParams.get('q') || '';
+const posts = await getCollection('blog');
+const filteredPosts = query
+  ? posts.filter(
+      post =>
+        post.data.title.toLowerCase().includes(query.toLowerCase()) ||
+        post.data.description.toLowerCase().includes(query.toLowerCase()) ||
+        (post.data.tags || []).some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+    )
+  : posts;
+
+const sortedPosts = filteredPosts.sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
+
+// Rileva se è una richiesta htmx (parziale)
+const isHtmxRequest = Astro.request.headers.get('HX-Request') === 'true';
+---
+
+{isHtmxRequest ? (
+  // Markup parziale per htmx: solo i risultati
+  <div id="posts-container" class="grid gap-10">
+    {sortedPosts.length > 0 ? (
+      sortedPosts.map(post => <ArticleCard post={post} />)
+    ) : (
+      <p class="text-gray-500 italic text-sm">Nessun articolo trovato per "{query}".</p>
+    )}
+  </div>
+) : (
+  // Markup completo per navigazione normale
+  <Layout
+    title={`Risultati per "${query || 'tutti gli articoli'}"`}
+    description={`Risultati della ricerca per "${query || 'tutti gli articoli'}" sul blog Astro.`}
+  >
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-8">
+      Risultati per "{query || 'tutti gli articoli'}"
+    </h1>
+
+    <div id="posts-container" class="grid gap-10">
+      {sortedPosts.length > 0 ? (
+        sortedPosts.map(post => <ArticleCard post={post} />)
+      ) : (
+        <p class="text-gray-500 italic text-sm">Nessun articolo trovato per "{query}".</p>
+      )}
+    </div>
+  </Layout>
+)}

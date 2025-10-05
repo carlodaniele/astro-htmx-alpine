@@ -22,7 +22,9 @@ const totalPosts = sortedPosts.length;
 
   <div 
     x-data={`{ visibleItems: ${POSTS_PER_PAGE} }`}
-    x-cloak 
+    x-cloak
+    id="posts-container"
+    class="grid gap-10"
   >
   
     <div class="grid gap-10">
