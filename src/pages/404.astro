@@ -12,8 +12,9 @@ const latestPosts = posts
 <Layout 
     title="404 - Pagina non trovata" 
     description="La pagina che stai cercando non esiste. Scopri gli ultimi articoli del blog."
+    showSearch={true}
 >
-    <div class="max-w-4xl mx-auto px-6 py-12 text-center relative z-10">
+    <div id="page-404" class="max-w-4xl mx-auto px-6 pt-32 pb-12 md:pt-40 md:pb-16 text-center relative z-10">
         <h1 class="text-5xl font-extrabold text-white mb-4 drop-shadow-lg">404 - Oops!</h1>
         <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4 mb-8">
             <p class="text-lg text-gray-100 drop-shadow-md">
@@ -30,39 +31,45 @@ const latestPosts = posts
         </div>
     </div>
 
-    <style is:global>
-        body {
-            background-image: url('/404.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            min-height: 100vh;
+    <style>
+        /* Sfondo body solo se #page-404 è presente (CSS :has()) */
+        body:has(#page-404) {
+            background-image: url('/404.jpg') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-attachment: fixed !important;
+            background-repeat: no-repeat !important;
+            min-height: 100vh !important;
         }
 
-        /* Menu di navigazione semitrasparente solo su questa pagina */
-        header {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        /* Menu semitrasparente solo su 404 */
+        body:has(#page-404) header {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
         }
 
-        nav a {
-            color: rgba(255, 255, 255, 0.9);
+        body:has(#page-404) nav a {
+            color: rgba(255, 255, 255, 0.9) !important;
         }
 
-        nav a:hover {
-            color: #c084fc;
+        body:has(#page-404) nav a:hover {
+            color: #c084fc !important;
         }
 
-        /* Link nel messaggio con colore giallo per contrasto su verde/blu */
-        p a {
-            color: #fde68a;  /* Giallo Tailwind yellow-300 */
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);  /* Ombra per leggibilità */
+        /* Link nel messaggio: contrasto giallo solo su 404 */
+        body:has(#page-404) #page-404 p a {
+            color: #fde68a !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
         }
 
-        p a:hover {
-            color: #fbbf24;  /* Giallo più scuro per hover (yellow-400) */
+        body:has(#page-404) #page-404 p a:hover {
+            color: #fbbf24 !important;
+        }
+
+        /* Contenuto locale: ombre per contrasto */
+        #page-404 h1, #page-404 p {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
     </style>
 </Layout>

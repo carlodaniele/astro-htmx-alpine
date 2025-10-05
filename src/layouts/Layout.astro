@@ -4,9 +4,10 @@ import '../styles/global.css'
 interface Props {
 	title: string;
 	description?: string;
+	showSearch?: boolean;
 }
 
-const { title, description = "Il mio fantastico blog creato con Astro" } = Astro.props;
+const { title, description = "Il mio fantastico blog creato con Astro", showSearch = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -32,28 +33,30 @@ const { title, description = "Il mio fantastico blog creato con Astro" } = Astro
 						<a href="/" class="text-gray-600 hover:text-purple-700 mr-4">Home</a>
 						<a href="/blog" class="text-gray-600 hover:text-purple-700">Blog</a>
 						<a href="/archive" class="text-gray-600 hover:text-purple-700">Archive</a>
-						<form
-							action="/search"
-							hx-get="/search"
-							hx-trigger="submit"
-							hx-target="#posts-container"
-							hx-swap="innerHTML"
-							hx-push-url="true"
-							class="relative"							
-						>
-            				<input
-								type="text"
-								name="q"
-								placeholder="Cerca..."
+						{showSearch && (
+							<form
+								action="/search"
 								hx-get="/search"
-								hx-trigger="input changed delay:500ms"
+								hx-trigger="submit"
 								hx-target="#posts-container"
 								hx-swap="innerHTML"
 								hx-push-url="true"
-								class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 w-40 md:w-64"
-							/>
-							<div class="htmx-indicator absolute top-0 right-0 mt-2 mr-2 text-gray-500">🔍</div>
-						</form>
+								class="relative"							
+							>
+								<input
+									type="text"
+									name="q"
+									placeholder="Cerca..."
+									hx-get="/search"
+									hx-trigger="input changed delay:500ms"
+									hx-target="#posts-container"
+									hx-swap="innerHTML"
+									hx-push-url="true"
+									class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 w-40 md:w-64"
+								/>
+								<div class="htmx-indicator absolute top-0 right-0 mt-2 mr-2 text-gray-500">🔍</div>
+							</form>
+						)}
 					</div>
 				</nav>
 			</header>

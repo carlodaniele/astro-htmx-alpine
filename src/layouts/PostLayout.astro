@@ -14,7 +14,7 @@ const formattedDate = new Date(frontmatter.pubDate).toLocaleDateString('it-IT', 
   day: 'numeric',
 });
 ---
-<Layout title={frontmatter.title} description={frontmatter.description}>
+<Layout title={frontmatter.title} description={frontmatter.description} showSearch={false}>
   <article class="max-w-4xl mx-auto">
     <!-- Intestazione dell'articolo -->
     <div class="mb-8 text-center">
